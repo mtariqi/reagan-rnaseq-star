@@ -1,0 +1,30 @@
+# Workflow state and logs
+.snakemake/
+logs/
+__pycache__/
+*.pyc
+
+# Generated results and submission evidence
+results/
+submission/
+review/
+
+# Sequencing data and reference files
+*.fastq
+*.fastq.gz
+*.fq
+*.fq.gz
+*.bam
+*.bai
+*.cram
+*.crai
+*.fa
+*.fasta
+*.fai
+*.gtf
+*.gtf.gz
+*.sif
+
+# Local environments and credentials
+.venv/
+.env

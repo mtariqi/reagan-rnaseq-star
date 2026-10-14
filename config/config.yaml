@@ -1,0 +1,11 @@
+reference:
+  fasta: /courses/BINF6430.202710/shared/gencode/GRCh38.primary_assembly.genome.fa
+  gtf: /courses/BINF6430.202710/shared/gencode/gencode.v46.annotation.gtf
+
+star:
+  container: /shared/container_repository/explorer/star/2.7.10b/star_2.7.10b.sif
+  sjdb_overhang: 84
+  threads: 16
+
+fastq_root: /courses/BINF6430.202710/data/ReaganData/Reagan_PE85_TakaraPicoV2_HC_CM_10042022
+samples: config/samples.tsv
