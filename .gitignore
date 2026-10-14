@@ -28,3 +28,6 @@ review/
 # Local environments and credentials
 .venv/
 .env
+
+# Local backup files
+*.bak
