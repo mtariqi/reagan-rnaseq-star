@@ -12,6 +12,90 @@ and prepare indexed BAM files for local alignment visualization.
 This project evaluates alignment outcomes. It does not perform
 gene quantification or differential expression analysis.
 
+## Project 5 workflow
+
+The original six-sample analysis is complete. Following Magali’s review,
+the proposed final sample set is 050A, 050M, M1SA, M1SB, OPMA, and OPMB.
+The four additional alignments must be verified before updating the
+final results.
+
+```mermaid
+flowchart TD
+    subgraph INPUT["1. Inputs and sample selection"]
+        A["Course dataset: 12 samples<br/>48 compressed FASTQ files"]
+        B["Proposed final six samples<br/>050A, 050M, M1SA, M1SB, OPMA, OPMB"]
+        C["Validate sample identities<br/>Two lanes and two mates per sample<br/>24 FASTQs for the selected six"]
+        A --> B --> C
+    end
+
+    subgraph REF["2. Reference preparation — completed"]
+        D["GRCh38 primary assembly FASTA<br/>GENCODE v46 annotation GTF"]
+        E["STAR 2.7.10b genome indexing<br/>16 CPUs, 128 GB RAM<br/>sjdbOverhang: 84"]
+        F["Reusable STAR index<br/>Genome, SA, SAindex and metadata"]
+        D --> E --> F
+    end
+
+    subgraph RUN["3. Alignment on Explorer HPC"]
+        G["Snakemake dry run<br/>Check paths and dependencies"]
+        H["Reuse completed 050A and 050M<br/>Additional samples require alignment<br/>M1SA, M1SB, OPMA and OPMB"]
+        I["Slurm execution<br/>Up to two STAR jobs concurrently<br/>16 CPUs and 128 GB per job"]
+        J["Per-sample outputs<br/>Coordinate-sorted BAM<br/>STAR final and progress logs"]
+        G --> H --> I --> J
+    end
+
+    C --> G
+    F --> G
+
+    subgraph CHECK["4. Validation and interpretation"]
+        K{"Job completed successfully?"}
+        L["Troubleshoot logs, paths<br/>resources and environment"]
+        M["samtools quickcheck<br/>BAM header and EOF checks"]
+        N["samtools index<br/>Generate BAM indexes"]
+        O["Summarize STAR final logs<br/>Unique and multiple-loci mapping<br/>Unmapped categories and mismatches"]
+        J --> K
+        K -->|"No"| L
+        L --> G
+        K -->|"Yes"| M --> N
+        K -->|"Yes"| O
+    end
+
+    subgraph VIEW["5. Local alignment visualization"]
+        P["Select an I gene for Islam<br/>Check annotated exon coverage"]
+        Q["Local reference FASTA index<br/>samtools tview of IGF1R in 050M"]
+        R["Inspect authentic text output<br/>Reference bases and aligned reads<br/>Explain splice-skip notation"]
+        N --> P --> Q --> R
+    end
+
+    subgraph REPORT["6. Independent review and submission"]
+        S["Magali independently reviews<br/>Inputs, statistics and outputs"]
+        T["Joint interpretation<br/>Methods, rationale and limitations<br/>Results, discussion and reflection"]
+        U["Submission evidence<br/>STAR index screenshot<br/>Six final logs and tview text<br/>PDF narrative"]
+        V["GitHub repository<br/>Code, configuration and documentation<br/>Large data and outputs excluded"]
+        O --> S
+        R --> S
+        S --> T --> U
+        T --> V
+    end
+
+    W["Original completed set retained<br/>050A, 050M, 192A, 192R, 247A, 247O<br/>Historical results are not revised-set results"]
+    A -.-> W
+
+    classDef completed fill:#e8f5e9,stroke:#2e7d32,color:#111;
+    classDef pending fill:#fff3e0,stroke:#b26a00,color:#111;
+    classDef evidence fill:#e3f2fd,stroke:#1565c0,color:#111;
+
+    class D,E,F,W completed;
+    class B,H pending;
+    class J,U,V evidence;
+```
+
+### Interpretation boundaries
+
+- High overall mapping does not necessarily mean unique genomic assignment.
+- BAM quickcheck is a rapid structural check, not exhaustive validation.
+- The IGF1R view supports local alignment inspection, not differential expression.
+- Revised sample labels and comparisons must be checked against course metadata.
+- Update completion labels only after the additional outputs are verified.
 ## Contributors
 
 - Md Tariqul Islam: group leader; HPC setup, workflow implementation,
