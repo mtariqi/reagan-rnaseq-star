@@ -88,6 +88,96 @@ flowchart TD
     class B,H pending;
     class J,U,V evidence;
 ```
+## Repository structure
+
+```text
+reagan-rnaseq-star/
+├── README.md                         # Objectives, methods, results and execution
+├── Snakefile                         # STAR indexing, alignment and BAM indexing
+├── .gitignore                        # Excludes large data and generated outputs
+│
+├── config/
+│   ├── config.yaml                   # Reference paths and STAR settings
+│   ├── samples.tsv                   # Samples selected for workflow execution
+│   └── python-packages.lock.txt      # Recorded Python dependencies
+│
+├── scripts/
+│   ├── star_index.sh                 # Additional standalone indexing script
+│   ├── submit_index.sh               # Slurm coordinator for STAR indexing
+│   └── submit_alignments.sh          # Slurm coordinator for sample alignments
+│
+└── workflow/
+    └── Snakefile.index-only.bak       # Local backup; excluded from Git
+```
+
+### Planned reproducibility additions
+
+The following files are proposed additions. They must be added and
+verified before being described as available in this repository.
+
+```text
+reagan-rnaseq-star/
+├── config/
+│   ├── samples_original.tsv          # Preserve the original six-sample selection
+│   └── sample_metadata.tsv           # Verified conditions and comparison labels
+│
+├── scripts/
+│   ├── validate_inputs.py            # Check sample files and mate/lane assignments
+│   ├── summarize_star_logs.py        # Extract alignment metrics from original logs
+│   ├── candidate_exons.py            # Extract candidate exon coordinates
+│   ├── screen_exon_coverage.py        # Identify covered visualization regions
+│   ├── prepare_tview.sh              # Reproduce the selected IGF1R text view
+│   └── collect_evidence.sh           # Gather required submission evidence
+│
+├── docs/
+│   ├── workflow.md                   # Mermaid workflow and stage descriptions
+│   ├── methods.md                    # Parameter choices and rationale
+│   ├── troubleshooting.md            # HPC issues and resolutions
+│   └── reproducibility.md            # Environment setup and verification steps
+│
+├── tables/
+│   └── alignment_summary.csv         # Reviewed metrics for the final sample set
+│
+└── report/
+    └── Project05_Report.pdf          # Reviewed narrative with references
+```
+
+### HPC outputs excluded from Git
+
+These directories remain in the HPC workspace and require separate backup:
+
+```text
+Project05/
+├── results/
+│   ├── STAR_index/                   # Genome index and annotation metadata
+│   ├── alignments/
+│   │   └── <sample>/
+│   │       ├── <sample>_Aligned.sortedByCoord.out.bam
+│   │       ├── <sample>_Aligned.sortedByCoord.out.bam.bai
+│   │       ├── <sample>_Log.final.out
+│   │       ├── <sample>_Log.out
+│   │       ├── <sample>_Log.progress.out
+│   │       └── <sample>_SJ.out.tab
+│   ├── reference/                    # FASTA symlink and local FASTA index
+│   ├── I_gene_candidate_exons.tsv
+│   └── I_gene_covered_positions.tsv
+│
+├── logs/                             # STAR, Slurm coordinator and indexing logs
+├── submission/
+│   ├── STAR_final_logs/              # Original final logs copied for submission
+│   ├── STAR_index_build.log
+│   ├── STAR_index_directory_listing.txt
+│   └── 050M_IGF1R_tview.txt
+│
+└── review/
+    └── magali/                       # Independent audit and analysis files
+```
+
+**Sample-selection status:** the original completed set was
+050A, 050M, 192A, 192R, 247A and 247O. The proposed revised set is
+050A, 050M, M1SA, M1SB, OPMA and OPMB. Preserve the original manifest
+before updating `samples.tsv`, and regenerate final summaries after
+the additional alignments are verified.
 
 ### Interpretation boundaries
 
